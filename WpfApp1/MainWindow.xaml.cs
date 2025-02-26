@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Threading;
 
 namespace WpfApp1
 {
@@ -22,7 +23,7 @@ namespace WpfApp1
     {
         Button[,] gameGrid = new Button[3, 3];
         Game gameLogic = new Game();
-
+        int turnsDone = 0;
         public MainWindow()
         {
             InitializeComponent();
@@ -45,7 +46,6 @@ namespace WpfApp1
                 }
             }
         }
-
         private void PlayerClicks(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
@@ -55,6 +55,16 @@ namespace WpfApp1
                 button.Content = gameLogic.CurrentPlayer;
                 button.FontSize = 60;
                 gameLogic.SetNext();
+                lblDesc.Content = $"Player '{gameLogic.CurrentPlayer}' Turn!";
+                turnsDone++;
+                gameLogic.CheckState(gameGrid, lblDesc);
+
+                if (turnsDone == 9)
+                {
+                    lblDesc.Content = $"Board Cleared! Player '{gameLogic.CurrentPlayer}' Turn!";
+                    gameLogic.ClearBoard(gameGrid);
+                    turnsDone = 0;
+                }
             }
         }
         public void DisplayGame()
@@ -76,8 +86,6 @@ namespace WpfApp1
             }
 
         }
-
-        
 
     }
 }
